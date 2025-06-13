@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFPU2 기종선정 시트</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            position: relative;
+            max-width: 1200px;  /* 전체 컨테이너 너비 조정 */
+            margin: 0 auto;
+            padding-right: 170px;  /* 이미지를 위한 여백 확보 */
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .title-table {
+            width: calc(100% - 170px);  /* 이미지 공간을 제외한 너비 */
+            margin-bottom: 40px;
+            border-collapse: collapse;
+            border: none;
+            position: relative;
+        }
+
+        .title-cell {
+            padding: 15px;
+            border: none;
+            position: relative;
+            width: 100%;  /* 전체 너비 사용 */
+        }
+
+        .title-wrapper {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            left: 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1a73e8;
+            margin-right: 120px;
+        }
+
+        .button-cell {
+            padding: 15px;
+            border: none;
+            width: 120px;  /* 버튼 셀 고정 너비 */
+            position: relative;
+            z-index: 1;
+        }
+
+        .calculate-btn {
+            padding: 8px 20px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .calculate-btn:hover {
+            background-color: #1557b0;
+        }
+
+        .title-table td {
+            border: none;
+        }
+
+        .step {
+            margin-bottom: 30px;
+        }
+
+        .step-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: left;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        th, td {
+            padding: 18px 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        th { 
+            background: #f5f5f5 !important; 
+            font-weight: bold !important; 
+            text-align: center !important; 
+            padding: 10px 10px !important;
+        }
+
+        .input-cell {
+            background-color: #e8f5e9;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+        }
+
+        .result-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #e0e0e0;  /* 초기 상태는 회색으로 */
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 30px;
+            color: #666;  /* 초기 상태는 회색 텍스트 */
+        }
+
+        .diagram {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .diagram img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .results-container {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .forces-display {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 6px;
+        }
+
+        .force-item {
+            text-align: center;
+        }
+
+        .force-label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .force-value {
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .progress-section {
+            text-align: center;
+        }
+
+        .progress-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .progress-status {
+            text-align: center;
+            margin-top: 5px;
+            color: #666;  /* 초기 상태는 회색 텍스트 */
+        }
+
+        .final-judgment {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .judgment-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .judgment-result {
+            font-size: 1.5em;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        .step {
+            margin-bottom: 20px;
+        }
+
+        .results-container {
+            margin-top: 15px;
+        }
+
+        /* STEP 1 테이블 스타일 수정 */
+        .step table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .step table th,
+        .step table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .step table th {
+            background-color: #f8f9fa;
+            font-weight: normal;
+            border: none;
+            text-align: left;
+        }
+
+        /* 테이블 외각선 제거 */
+        .step table {
+            border: none;
+        }
+
+        /* 초기 상태의 스타일 추가 */
+        .judgment-result:not([class*="applicable"]) {
+            background-color: #808080;  /* #gray 대신 실제 회색 색상 코드 사용 */
+        }
+        
+        .progress-fill {
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .error-message {
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .order-number-cell {
+            padding: 15px;
+            border: none;
+            width: 120px;  /* 버튼 셀 고정 너비 */
+            position: relative;
+            z-index: 1;
+        }
+
+        .order-number-wrapper {
+            text-align: left;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #000;
+            line-height: 1.5;
+        }
+        .order-number-wrapper span {
+            display: inline;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 150px;  /* 이미지 크기 증가 */
+        }
+        
+        .logo-container img {
+            width: 100%;
+            height: auto;
+        }
+
+        .order-number-table {
+            width: calc(100% - 170px);  /* 이미지 공간을 제외한 너비 */
+        }
+
+        .diagrams-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 20px;
+        }
+
+        .diagram-item {
+            text-align: center;
+            flex: 1;
+            margin: 0 20px;
+        }
+
+        .diagram-item img {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .diagram-caption {
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="C:\python\airChuckSelector\images\NFPU2.PNG" alt="NFPU2 로고">
+        </div>
+        <table class="title-table">
+            <tr>
+                <td class="title-cell">
+                    <div class="title-wrapper">NFPU2 기종선정 시트</div>
+                </td>
+            </tr>
+        </table>
+        <table class="order-number-table">
+            <tr>
+                <td class="order-number-cell">
+                    <div class="order-number-wrapper">
+                        <strong>주문 품번:</strong>
+                        <span id="orderNumber"></span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="step">
+            <h2 class="step-title">STEP 1. 기본 사용조건과 대상 에어척 사양 입력하여 실효 파지력 확인</h2>
+            <table>
+                <tr>
+                    <th>파라미터</th>
+                    <th>입력값</th>
+                    <th>단위</th>
+                    <th>설명</th>
+                </tr>
+                <tr>
+                    <td>파지 방법</td>
+                    <td class="input-cell">
+                        <select id="gripMethod">
+                            <option value="">선택</option>
+                            <option value="external">외경 파지</option>
+                        </select>
+                    </td>
+                    <td>-</td>
+                    <td>외경 파지 (내경 파지 불가)</td>
+                </tr>
+                <tr>
+                    <td>내경</td>
+                    <td class="input-cell">
+                        <select id="diameter">
+                            <option value="">선택</option>
+                            <option value="010">Ø10</option>
+                            <option value="016">Ø16</option>
+                            <option value="020">Ø20</option>
+                            <option value="025">Ø25</option>
+                        </select>
+                    </td>
+                    <td>-</td>
+                    <td>에어척 내경 선택</td>
+                </tr>
+                <tr>
+                    <td>작동 방식</td>
+                    <td class="input-cell">
+                        <select id="operationType">
+                            <option value="">선택</option>
+                            <option value="S">S</option>
+                            <option value="D">D</option>
+                        </select>
+                    </td>
+                    <td>-</td>
+                    <td>D : 복동, S : 상시 열림(외경파지)</td>
+                </tr>
+                <tr>
+                    <td>사용 압력</td>
+                    <td class="input-cell">
+                        <select id="pressure">
+                            <option value="">선택</option>
+                        </select>
+                    </td>
+                    <td>MPa</td>
+                    <td>사용압력 선택</td>
+                </tr>
+                <tr>
+                    <td>부하량</td>
+                    <td class="input-cell">
+                        <input type="number" 
+                               id="load" 
+                               value="" 
+                               step="0.01"
+                               placeholder="부하량 입력">
+                    </td>
+                    <td>kg</td>
+                    <td>적재 질량 입력</td>
+                </tr>
+                <tr>
+                    <td>안전율</td>
+                    <td class="input-cell">
+                        <input type="number" 
+                               id="safetyFactor" 
+                               value="" 
+                               min="5" 
+                               max="20"
+                               placeholder="5 ~ 20">
+                    </td>
+                    <td>-</td>
+                    <td>5~20 에서 선정</td>
+                </tr>
+                <tr>
+                    <td>파지점</td>
+                    <td class="input-cell">
+                        <input type="number" 
+                               id="gripPoint" 
+                               value=""
+                               placeholder="파지점 입력">
+                    </td>
+                    <td>mm</td>
+                    <td>첨부 그림 참조</td>
+                </tr>
+                <tr>
+                    <td>2차전지 대응 사양</td>
+                    <td class="input-cell">
+                        <select id="batterySpec">
+                            <option value="">선택</option>
+                            <option value="2B">2B</option>
+                        </select>
+                    </td>
+                    <td>-</td>
+                    <td>2차전지 대응 시리즈</td>
+                </tr>
+                <tr>
+                    <td>오토스위치 종류</td>
+                    <td class="input-cell">
+                        <select id="switchType">
+                            <option value="">선택</option>
+                            <option value="W9H">W9H</option>
+                            <option value="W9V">W9V</option>
+                            <option value="W10V">W10V</option>
+                            <option value="W20H">W20H</option>
+                            <option value="MZC1D">MZC1D</option>
+                            <option value="MZC1N">MZC1N</option>
+                            <option value="MZC1P">MZC1P</option>
+                        </select>
+                    </td>
+                    <td>-</td>
+                    <td>오토스위치 종류 선택</td>
+                </tr>
+                <tr>
+                    <td>오토스위치 수량</td>
+                    <td class="input-cell">
+                        <select id="switchQuantity">
+                            <option value="">선택</option>
+                            <option value="2">2개 부착</option>
+                            <option value="1">1개 부착</option>
+                            <option value="N">N개 부착</option>
+                        </select>
+                    </td>
+                    <td>-</td>
+                    <td>오토스위치 수량 선택</td>
+                </tr>
+            </table>
+
+            <!-- 결과 표시 섹션 -->
+            <div class="results-container">
+                <div class="forces-display">
+                    <div class="force-item">
+                        <div class="force-label">실효파지력(F)</div>
+                        <div class="force-value" id="actualForce">- N</div>
+                    </div>
+                    <div class="force-item">
+                        <div class="force-label">필요파지력(F')</div>
+                        <div class="force-value" id="requiredForce">- N</div>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar" style="width: 0%">
+                            <div class="progress-text">-%</div>
+                        </div>
+                    </div>
+                    <div class="progress-status" id="progressStatus">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <h2 class="step-title">STEP 2. 파지력 확인이 '적용가능'인 경우 파지점 확인</h2>
+            
+            <div class="results-container">
+                <div class="forces-display">
+                    <div class="force-item">
+                        <div class="force-label">현재 파지점</div>
+                        <div class="force-value" id="currentGripPoint">- mm</div>
+                    </div>
+                    <div class="force-item">
+                        <div class="force-label">허용 파지점</div>
+                        <div class="force-value" id="maxGripPoint">- mm</div>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="gripProgressBar" style="width: 0%">
+                            <div class="progress-text">-%</div>
+                        </div>
+                    </div>
+                    <div class="progress-status" id="gripProgressStatus">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 종합 판정 섹션 -->
+        <div class="final-judgment">
+            <div class="judgment-title">종합 판정</div>
+            <div class="judgment-result" id="finalResult">값을 모두 입력하세요</div>
+        </div>
+
+        <!-- 다이어그램 섹션 -->
+        <div class="diagrams-container">
+            <div class="diagram-item">
+                <img src="C:\python\airChuckSelector\images\NFPU2_img1.png" alt="외경 파지">
+                <div class="diagram-caption">외경 파지</div>
+            </div>
+            <div class="diagram-item">
+                <img src="C:\python\airChuckSelector\images\NFPU2_img2.png" alt="파지점 다이어그램">
+                <div class="diagram-caption">첨부 그림</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chuckData = {
+            '010': {
+                'D': { force: 4.7, range: 30, order: 'NFPU2-10-D' },
+                'S': { force: 3.1, range: 30, order: 'NFPU2-10-S' }
+            },
+            '016': {
+                'D': { force: 18.8, range: 40, order: 'NFPU2-16-D' },
+                'S': { force: 16.3, range: 40, order: 'NFPU2-16-S' }
+            },
+            '020': {
+                'D': { force: 30.2, range: 60, order: 'NFPU2-20-D' },
+                'S': { force: 23.7, range: 60, order: 'NFPU2-20-S' }
+            },
+            '025': {
+                'D': { force: 59, range: 80, order: 'NFPU2-25-D' },
+                'S': { force: 52, range: 80, order: 'NFPU2-25-S' }
+            }
+        };
+
+        // 중심간거리와 로드경 데이터 추가
+        const chuckSpecs = {
+            '010': {
+                centerDistance: 7.5,  // 중심간거리
+                rodDiameter: 6,      // 로드경
+                sTypeReduction: 1.6   // S타입 감소값
+            },
+            '016': {
+                centerDistance: 10,
+                rodDiameter: 8,
+                sTypeReduction: 2.5
+            },
+            '020': {
+                centerDistance: 12,
+                rodDiameter: 12,
+                sTypeReduction: 6.5
+            },
+            '025': {
+                centerDistance: 14,
+                rodDiameter: 14,
+                sTypeReduction: 7
+            }
+        };
+
+        // 작동 방식별 압력 옵션 데이터 수정
+        const pressureOptionsByType = {
+            'D': [0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6], // 복동형
+            'S': [0.3, 0.35, 0.4, 0.5, 0.6], // 단동형 (상시 열림)
+            'T': [0.3, 0.35, 0.4, 0.5, 0.6]  // 단동형 (상시 닫힘)
+        };
+
+        // 압력 옵션 업데이트 함수 수정
+        function updatePressureOptions() {
+            const operationType = document.getElementById('operationType').value;
+            const pressureSelect = document.getElementById('pressure');
+            
+            // 기존 옵션 제거
+            pressureSelect.innerHTML = '';
+            
+            if (!operationType) {
+                pressureSelect.innerHTML = '<option value="">작동 방식을 먼저 선택하세요</option>';
+                return;
+            }
+            
+            // 기본 옵션 추가
+            pressureSelect.innerHTML = '<option value="">압력 선택</option>';
+            
+            // 작동 방식에 따른 압력 옵션 추가
+            const availablePressures = pressureOptionsByType[operationType];
+            if (availablePressures) {
+                availablePressures.forEach(pressure => {
+                    const option = document.createElement('option');
+                    option.value = pressure;
+                    option.textContent = pressure.toFixed(2);
+                    pressureSelect.appendChild(option);
+                });
+            }
+            
+            // 압력 선택 초기화로 인한 재계산
+            calculateResults();
+        }
+
+        function updateOrderNumber() {
+            const diameter = document.getElementById('diameter').value;
+            const operationType = document.getElementById('operationType').value;
+            const batterySpec = document.getElementById('batterySpec').value;
+            const switchType = document.getElementById('switchType').value;
+            const switchQuantity = document.getElementById('switchQuantity').value;
+            
+            // 종합판정 상태 확인 - 정확히 '적용가능'일 때만 주문품번 표시
+            const finalResult = document.getElementById('finalResult').textContent;
+            
+            // 종합판정이 '적용가능'이 아니면 주문품번을 표시하지 않음
+            if (finalResult !== '적용가능') {
+                document.getElementById('orderNumber').textContent = '';
+                return;
+            }
+            
+            let orderNumber = "";
+            
+            // 모든 필드가 입력되었는지 확인
+            if (diameter && operationType) {
+                // 2차전지 대응 사양이 있으면 앞에 추가
+                if (batterySpec === "2B") {
+                    orderNumber += "2B-";
+                }
+                
+                // 기본 제품 코드 추가
+                orderNumber += `NFPU2-${diameter.substr(1)}${operationType}`;
+                
+                // 오토스위치 종류와 수량이 있으면 추가
+                if (switchType && switchQuantity) {
+                    // 스위치 수량에 따라 S 또는 N 추가 (하이픈 없이)
+                    let quantitySuffix = "";
+                    if (switchQuantity === "1") {
+                        quantitySuffix = "S";
+                    } else if (switchQuantity === "N") {
+                        quantitySuffix = "N";
+                    }
+                    
+                    orderNumber += `-${switchType}${quantitySuffix}`;  // 하이픈 제거하고 직접 붙임
+                }
+                
+                document.getElementById('orderNumber').textContent = orderNumber;
+            } else {
+                document.getElementById('orderNumber').textContent = "";
+            }
+        }
+
+        // 사용 압력 입력 처리를 위한 함수 추가
+        function validateAndFormatPressure(input) {
+            // 입력값에서 숫자와 소수점만 추출
+            let value = input.value.replace(/[^\d.]/g, '');
+            
+            // 소수점이 여러 개인 경우 첫 번째만 유지
+            let parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // 숫자로 변환
+            let numValue = parseFloat(value);
+
+            // 범위 체크 (0.1 ~ 0.7)
+            if (!isNaN(numValue)) {
+                if (numValue < 0.1) numValue = 0.1;
+                if (numValue > 0.7) numValue = 0.7;
+                
+                // 소수점 2자리로 포맷팅
+                input.value = numValue.toFixed(2);
+            } else {
+                input.value = '0.50'; // 잘못된 입력시 기본값
+            }
+        }
+
+        // 실효파지력 계산 함수
+        function calculateEffectiveGripForce(diameter, operationType, pressure, gripPoint) {
+            if (!diameter || !operationType || !pressure || !gripPoint) return 0;
+
+            const specs = chuckSpecs[diameter];
+            const boreDiameter = parseInt(diameter.substr(1)); // 내경
+            
+            // 출력[N] 계산
+            const PI = Math.PI;
+            const outputForce = (PI * Math.pow(boreDiameter, 2) / 4 * pressure) - 
+                              (PI * Math.pow(specs.rodDiameter, 2) / 4 * pressure);
+
+            // 토크[kgf•mm] 계산
+            const torque = specs.centerDistance * outputForce;
+
+            // D타입 파지력[N] 계산
+            let gripForce = (torque / gripPoint) / 2;
+
+            // S타입인 경우 감소값 적용
+            if (operationType === 'S') {
+                gripForce -= specs.sTypeReduction;
+            }
+
+            return gripForce;
+        }
+
+        // 계산 함수 수정
+        function calculateResults() {
+            const diameter = document.getElementById('diameter').value;
+            const operationType = document.getElementById('operationType').value;
+            const pressure = parseFloat(document.getElementById('pressure').value);
+            const gripPoint = parseFloat(document.getElementById('gripPoint').value);
+            const load = parseFloat(document.getElementById('load').value);
+            const safetyFactor = parseFloat(document.getElementById('safetyFactor').value);
+
+            if (!diameter || !operationType || !pressure || !gripPoint) {
+                initializeResults();
+                return;
+            }
+
+            // 실효파지력 계산
+            const actualForce = calculateEffectiveGripForce(diameter, operationType, pressure, gripPoint);
+            
+            // 필요파지력 계산 (기존 로직 유지)
+            const requiredForce = load * safetyFactor * 9.8;
+
+            // 결과 업데이트
+            document.getElementById('actualForce').textContent = actualForce.toFixed(1) + ' N';
+            document.getElementById('requiredForce').textContent = requiredForce.toFixed(1) + ' N';
+
+            // 허용 범위 설정
+            const maxGripPoint = chuckData[diameter][operationType].range;
+
+            // 파지력 사용률 계산 수정 (필요파지력/실효파지력 * 100)
+            const ratio = (requiredForce / actualForce) * 100;
+            
+            // 프로그레스 바 업데이트
+            const progressBar = document.getElementById('progressBar');
+            const progressText = progressBar.querySelector('.progress-text');
+            const progressStatus = document.getElementById('progressStatus');
+            
+            progressBar.style.width = ratio + '%';
+            progressText.textContent = ratio.toFixed(1) + '%';
+            
+            // 파지력 상태 업데이트 수정 - 100% 미만일 때 적용가능
+            if (ratio < 100) {  // 70%에서 100%로 기준 변경
+                progressBar.style.backgroundColor = '#4CAF50';
+                progressStatus.textContent = '적용가능';
+                progressStatus.style.color = '#4CAF50';
+            } else {
+                progressBar.style.backgroundColor = '#f44336';
+                progressStatus.textContent = '적용불가';
+                progressStatus.style.color = '#f44336';
+            }
+
+            // 파지점 사용률 계산
+            const gripRatio = (gripPoint / maxGripPoint) * 100;
+            
+            // 파지점 결과 업데이트
+            document.getElementById('currentGripPoint').textContent = gripPoint + ' mm';
+            document.getElementById('maxGripPoint').textContent = maxGripPoint + ' mm';
+            
+            // 파지점 프로그레스 바 업데이트
+            const gripProgressBar = document.getElementById('gripProgressBar');
+            const gripProgressText = gripProgressBar.querySelector('.progress-text');
+            const gripProgressStatus = document.getElementById('gripProgressStatus');
+            
+            gripProgressBar.style.width = gripRatio + '%';
+            gripProgressText.textContent = gripRatio.toFixed(1) + '%';
+            
+            // 파지점 상태 업데이트
+            if (gripRatio <= 100) {
+                gripProgressBar.style.backgroundColor = '#4CAF50';
+                gripProgressStatus.textContent = '적용가능';
+                gripProgressStatus.style.color = '#4CAF50';
+            } else {
+                gripProgressBar.style.backgroundColor = '#f44336';
+                gripProgressStatus.textContent = '적용불가';
+                gripProgressStatus.style.color = '#f44336';
+            }
+
+            // 종합 판정 수정
+            const finalResult = document.getElementById('finalResult');
+            if (ratio < 100 && gripRatio <= 100) {
+                finalResult.textContent = '적용가능';
+                finalResult.style.backgroundColor = '#4CAF50';
+            } else {
+                finalResult.textContent = '적용불가';
+                finalResult.style.backgroundColor = '#f44336';
+            }
+
+            // 종합 판정 후 주문품번 업데이트
+            updateOrderNumber();
+        }
+
+        // 초기화 함수 수정
+        function initializeResults() {
+            // STEP 1 초기화
+            document.getElementById('actualForce').textContent = '- N';
+            document.getElementById('requiredForce').textContent = '- N';
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressBar').querySelector('.progress-text').textContent = '-%';
+            document.getElementById('progressStatus').textContent = '-';
+            
+            // STEP 2 초기화
+            document.getElementById('currentGripPoint').textContent = '- mm';
+            document.getElementById('maxGripPoint').textContent = '- mm';
+            document.getElementById('gripProgressBar').style.width = '0%';
+            document.getElementById('gripProgressBar').querySelector('.progress-text').textContent = '-%';
+            document.getElementById('gripProgressStatus').textContent = '-';
+            
+            // 종합 판정 초기화
+            document.getElementById('finalResult').textContent = '값을 모두 입력하세요';
+            document.getElementById('finalResult').style.backgroundColor = '#gray';
+            
+            // 주문품번 초기화
+            document.getElementById('orderNumber').textContent = '';
+        }
+
+        // 기존 pressureOptions 데이터를 pressureOptionsByType으로 대체하고
+        // getPressureIndex 함수를 수정
+        function getPressureIndex(diameter, operationType, pressure) {
+            if (!pressureOptionsByType[operationType]) {
+                return -1;
+            }
+            
+            const availablePressures = pressureOptionsByType[operationType];
+            return availablePressures.indexOf(pressure);
+        }
+
+        // 페이지 로드 시 통합 이벤트 리스너 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            // 초기화
+            initializeResults();
+            
+            // 모든 입력 요소에 이벤트 리스너 추가
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    calculateResults();
+                    updateOrderNumber();
+                });
+                input.addEventListener('change', function() {
+                    calculateResults();
+                    updateOrderNumber();
+                });
+            });
+            
+            // 작동 방식 변경 시 압력 옵션 업데이트
+            const operationTypeSelect = document.getElementById('operationType');
+            operationTypeSelect.addEventListener('change', function() {
+                updatePressureOptions();
+            });
+            
+            // 파지점 설명 수정
+            const gripPointDesc = document.querySelector('tr:has(#gripPoint) td:last-child');
+            if (gripPointDesc) {
+                gripPointDesc.textContent = '첨부 그림 참조';
+            }
+        });
+    </script>
+</body>
+</html>
