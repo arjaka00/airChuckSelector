@@ -400,10 +400,11 @@
 <div class="container">
     <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px;">
         <div style="flex:2; text-align:right;">
-            <div style="font-size:1.5em; font-weight:bold; color:#1a73e8; margin-bottom:10px;">NFHC2 기종선정 시트</div>
+            <div style="font-size:1.5em; font-weight:bold; color:#1a73e8; margin-bottom:10px;">NFHC2(평형 개폐형 컴펙트타입) 기종선정 시트</div>
         </div>
         <div style="flex:1; text-align:right;">
-            <img src="images/NFHC2.PNG" alt="NFHC2 로고" style="width:80px; height:auto;">
+            <img src="images/NFHC2.PNG" alt="NFHC2 로고" style="width:auto; height:120px;">
+            <img src="images/NFHC2.PNG" alt="NFHC2 로고" style="width:auto; height:120px;">
         </div>
     </div>
 
@@ -482,31 +483,31 @@
                     </select>
                 </td>
                 <td>MPa</td>
-                <td>사용압력 선택</td>
+                <td>사용압력 선택 [0.1~0.7MPa]</td>
             </tr>
             <tr>
                 <td>부하량</td>
-                <td class="input-cell"><input type="number" id="load" step="0.01" placeholder="부하량 입력"></td>
+                <td class="input-cell"><input type="number" id="load" step="0.001" min="0.001" max="1.8" placeholder="부하량 입력"></td>
                 <td>kg</td>
-                <td>적재 질량 입력</td>
+                <td>적재 질량 입력 [0.001~1.8kg]</td>
             </tr>
             <tr>
                 <td>안전율</td>
                 <td class="input-cell"><input type="number" id="safetyFactor" min="5" max="20" placeholder="5 ~ 20"></td>
                 <td>-</td>
-                <td>5~20 에서 선정</td>
+                <td>적재 질량 대비 확보해야할 파지력의 배수 [5~20]</td>
             </tr>
             <tr>
                 <td>파지점 L</td>
-                <td class="input-cell"><input type="number" id="gripPoint" placeholder="파지점 입력"></td>
+                <td class="input-cell"><input type="number" id="gripPoint" min="5" max="140" placeholder="파지점 입력"></td>
                 <td>mm</td>
-                <td>파지점까지의 거리</td>
+                <td>Rail 상면에서 부터 부하중심까지의 거리 [5~140mm]</td>
             </tr>
             <tr>
                 <td>오버행량 H</td>
-                <td class="input-cell"><input type="number" id="overhang" placeholder="오버행량 입력"></td>
+                <td class="input-cell"><input type="number" id="overhang" min="0" max="140" placeholder="오버행량 입력"></td>
                 <td>mm</td>
-                <td></td>
+                <td>Rail 상면에서 부터 부하중심까지의 거리 [0~140mm]</td>
             </tr>
             <!-- 조 옵션 -->
             <tr>
@@ -541,7 +542,8 @@
                 <td class="input-cell">
                     <select id="batterySpec">
                         <option value="">선택</option>
-                        <option value="2B">2B</option>
+                        <option value="">무기호 : 표준형</option>
+                        <option value="2B">2B : 2차전지사양</option>
                     </select>
                 </td>
                 <td>-</td>
@@ -606,7 +608,7 @@
     </div>
 
     <!-- STEP 2 섹션 추가 -->
-    <div class="step-title">STEP 2. 파지력 확인이 '적용가능'인 경우 파지점 확인</div>
+    <div class="step-title">STEP 2. 파지력 확인이 '적용가능'인 경우 파지점, 오버행량 확인</div>
     <div class="step-flex-row">
         <div class="grip-diagram2-area">
             <img src="images/NFHC2_img3.PNG" alt="파지점/오버행량 참조">
@@ -614,7 +616,7 @@
         <div class="result-values-area">
             <div class="forces-display">
                 <div class="force-item">
-                    <div class="force-label">현재 파지점</div>
+                    <div class="force-label">현재 파지점+오버행량</div>
                     <div class="force-value" id="currentGripPoint">- mm</div>
                 </div>
                 <div class="force-item">
@@ -804,22 +806,28 @@
 // 기존 pressureOptions 객체를 다음과 같이 교체하세요 (719줄 근처)
 const pressureOptions = {
     'D': { // 복동형
-        '008': [0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6],
-        '012': [0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6],
-        '016': [0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6],
-        '020': [0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6]
+        '008': [0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '012': [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '016': [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '020': [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7]
+    },
+    'B': { // 복동형
+        '008': [0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '012': [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '016': [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '020': [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7]
     },
     'S': { // 단동형
-        '008': [0.3, 0.35, 0.4, 0.5, 0.6],
-        '012': [0.3, 0.35, 0.4, 0.5, 0.6],
-        '016': [0.3, 0.35, 0.4, 0.5, 0.6],
-        '020': [0.3, 0.35, 0.4, 0.5, 0.6]
+        '008': [0.35, 0.4, 0.5, 0.6, 0.7],
+        '012': [0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '016': [0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '020': [0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7]
     },
     'T': { // 단동형
-        '008': [0.3, 0.35, 0.4, 0.5, 0.6],
-        '012': [0.3, 0.35, 0.4, 0.5, 0.6],
-        '016': [0.3, 0.35, 0.4, 0.5, 0.6],
-        '020': [0.3, 0.35, 0.4, 0.5, 0.6]
+        '008': [0.35, 0.4, 0.5, 0.6, 0.7],
+        '012': [0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '016': [0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7],
+        '020': [0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7]
     }
 };
 
@@ -828,28 +836,60 @@ function updatePressureOptions() {
     const operationType = document.getElementById('operationType').value;
     const diameter = document.getElementById('diameter').value;
     const pressureSelect = document.getElementById('pressure');
-    
-    // 기존 옵션 모두 제거 (첫 번째 "선택" 옵션 제외)
-    pressureSelect.innerHTML = '<option value="">작동 방식을 먼저 선택하세요</option>';
-    
-    if (operationType && diameter && pressureOptions[operationType] && pressureOptions[operationType][diameter]) {
-        // 해당하는 압력 옵션들 추가
+    const gripMethod = document.getElementById('gripMethod').value;
+
+    // 기본값
+    pressureSelect.innerHTML = '<option value="">선택</option>';
+
+    // 내경 미선택 시 안내만 표시
+    if (!diameter) {
+        pressureSelect.innerHTML = '<option value="">내경을 먼저 선택하세요</option>';
+        return;
+    }
+
+    // 작동 방식이 선택된 경우: 해당 조합의 압력만 표시
+    if (operationType && pressureOptions[operationType] && pressureOptions[operationType][diameter]) {
         const availablePressures = pressureOptions[operationType][diameter];
-        
-        // 첫 번째 옵션을 "선택"으로 변경
         pressureSelect.innerHTML = '<option value="">선택</option>';
-        
-        availablePressures.forEach(pressure => {
+        availablePressures.forEach((pressure) => {
             const option = document.createElement('option');
             option.value = pressure.toFixed(2);
             option.textContent = pressure.toFixed(2);
             pressureSelect.appendChild(option);
         });
-    } else if (!operationType) {
-        pressureSelect.innerHTML = '<option value="">작동 방식을 먼저 선택하세요</option>';
-    } else if (!diameter) {
-        pressureSelect.innerHTML = '<option value="">내경을 먼저 선택하세요</option>';
+        return;
     }
+
+    // 작동 방식이 미선택인 경우: 현재 파지 방법에서 허용되는 작동 방식들의 압력값을 합집합으로 제공
+    const allowedOperationTypes = (function() {
+        if (gripMethod === '외경 파지') return ['D', 'S'];
+        if (gripMethod === '내경 파지') return ['D', 'T'];
+        return ['D', 'S', 'T'];
+    })();
+
+    const pressureSet = new Set();
+    allowedOperationTypes.forEach((op) => {
+        if (pressureOptions[op] && pressureOptions[op][diameter]) {
+            pressureOptions[op][diameter].forEach((p) => pressureSet.add(p));
+        }
+    });
+
+    const unionPressures = Array.from(pressureSet).sort((a, b) => a - b);
+
+    if (unionPressures.length === 0) {
+        // 해당 내경에 대한 압력 데이터가 없을 때 안내
+        pressureSelect.innerHTML = '<option value="">해당 내경의 압력 데이터 없음</option>';
+        return;
+    }
+
+    // 합집합 압력 목록 표시
+    pressureSelect.innerHTML = '<option value="">선택</option>';
+    unionPressures.forEach((pressure) => {
+        const option = document.createElement('option');
+        option.value = pressure.toFixed(2);
+        option.textContent = pressure.toFixed(2);
+        pressureSelect.appendChild(option);
+    });
 }
 
 // 작동 방식 옵션을 업데이트하는 함수 (기존 함수 수정)
@@ -1012,8 +1052,8 @@ const allowedRangeData = {
     },
     '012': { // Ø12
         'D': {
-            'A': [100, 100, 100, 100, 90, 80, 60, 45, 40], // D타입: 0.15~0.7 (9개)
-            'B': [80, 80, 75, 70, 60, 50, 40, 30, 22.5]
+            'A': [100, 100, 100, 100, 100, 90, 80, 60, 45, 40], // D타입: 0.1~0.7 (10개)
+            'B': [80, 80, 80, 75, 70, 60, 50, 40, 30, 22.5]
         },
         'S': {
             'A': [100, 90, 80, 60, 45, 40] // S타입: 0.3~0.7 (6개)
@@ -1024,8 +1064,8 @@ const allowedRangeData = {
     },
     '016': { // Ø16
         'D': {
-            'A': [110, 110, 110, 110, 100, 90, 70, 57.5, 50], // D타입: 0.15~0.7 (9개)
-            'B': [100, 100, 95, 90, 80, 70, 57.5, 45, 37.5]
+            'A': [110, 110, 110, 110, 110, 100, 90, 70, 57.5, 50], // D타입: 0.1~0.7 (10개)
+            'B': [100, 100, 100, 95, 90, 80, 70, 57.5, 45, 37.5]
         },
         'S': {
             'A': [95, 90, 80, 70, 57.5, 45, 37.5] // S타입: 0.25~0.7 (7개)
@@ -1036,8 +1076,8 @@ const allowedRangeData = {
     },
     '020': { // Ø20
         'D': {
-            'A': [140, 140, 140, 140, 130, 120, 97.5, 80, 70], // D타입: 0.15~0.7 (9개)
-            'B': [140, 140, 131.25, 122.5, 107.5, 92.5, 72.5, 60, 50]
+            'A': [140, 140, 140, 140, 140, 130, 120, 97.5, 80, 70], // D타입: 0.1~0.7 (10개)
+            'B': [140, 140, 140, 131.25, 122.5, 107.5, 92.5, 72.5, 60, 50]
         },
         'S': {
             'A': [131.25, 122.5, 107.5, 92.5, 72.5, 60, 50] // S타입: 0.25~0.7 (7개)
@@ -1448,6 +1488,8 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('change', calculateResults);
     });
     
+    // 초기 압력 옵션도 세팅
+    updatePressureOptions();
     calculateResults();
 });
 </script>
