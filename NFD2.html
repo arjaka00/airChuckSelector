@@ -107,8 +107,12 @@
         .final-judgment { margin-top: 20px; padding: 20px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; text-align: center; }
         .judgment-title { font-size: 1.2em; font-weight: bold; margin-top: 15px; margin-bottom: 10px; color: #333; }
         .judgment-result { font-size: 1.5em; font-weight: bold; padding: 10px; border-radius: 4px; background: #4CAF50; color: #fff; display: inline-block; min-width: 200px; }
-        .final-images { margin-top: 15px; display: none; gap: 12px; align-items: center; justify-content: center; }
-        .final-images img { max-width: 45%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .final-images { margin-top: 15px; display: flex; gap: 20px; align-items: center; justify-content: center; }
+        .final-images img { height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .final-images .orient { display: flex; gap: 20px; align-items: center; }
+        .final-images .orient figure { margin: 0; text-align: center; }
+        .final-images .orient img { height: 140px; width: auto; }
+        .final-images .ref img { height: 160px; width: auto; }
         /* STEP 3 스타일 (NFHC2와 동일) */
         .step3-container { display: flex; gap: 20px; margin-top: 20px; }
         .step3-tables { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -215,13 +219,13 @@
                     </select>
                 </td>
                 <td>MPa</td>
-                <td>사용압력 선택 [0.1~0.7MPa]</td>
+                <td>사용압력 선택 [0.2~0.7MPa]</td>
             </tr>
             <tr>
                 <td>부하량</td>
-                <td class="input-cell"><input type="number" id="load" step="0.001" min="0.001" max="1.8" placeholder="부하량 입력"></td>
+                <td class="input-cell"><input type="number" id="load" step="0.001" min="0.001" max="17" placeholder="0.001~17kg"></td>
                 <td>kg</td>
-                <td>적재 질량 입력 [0.001~1.8kg]</td>
+                <td>적재 질량 입력 [0.001~17kg]</td>
             </tr>
             <tr>
                 <td>안전율</td>
@@ -243,15 +247,15 @@
             </tr>
             <tr>
                 <td>파지점 L</td>
-                <td class="input-cell"><input type="number" id="gripPoint" min="5" max="140" placeholder="파지점 입력"></td>
+                <td class="input-cell"><input type="number" id="gripPoint" min="20" max="300" placeholder="20 ~ 300"></td>
                 <td>mm</td>
-                <td>Rail 상면에서 부터 부하중심까지의 거리 [5~140mm]</td>
+                <td>LM Plate 상면에서부터 부하중심까지의 거리 [20~300mm]</td>
             </tr>
             <tr>
                 <td>오버행량 H</td>
-                <td class="input-cell"><input type="number" id="overhang" min="0" max="140" placeholder="오버행량 입력"></td>
+                <td class="input-cell"><input type="number" id="overhang" min="0" max="300" placeholder="0 ~ 300"></td>
                 <td>mm</td>
-                <td>Rail 상면에서 부터 부하중심까지의 거리 [0~140mm]</td>
+                <td>에어척 중심으로부터 부하중심까지 수평 거리 [0~300mm]</td>
             </tr>
             <tr>
                 <td>2차전지 대응 사양</td>
@@ -295,6 +299,12 @@
         </table>
     </div>
 
+    <div class="final-images" id="finalImages" style="margin:10px 0 0 0;">
+        <div class="orient">
+          <img src="images/NFD2_img2.PNG" alt="수평취부(천장)">
+          <img src="images/NFD2_img4.PNG" alt="수평벽취부)">
+        </div>
+      </div>
     <!-- STEP1 결과 + 그림 -->
     <div class="step-flex-row">
         <div class="grip-image-area">
@@ -323,6 +333,8 @@
         </div>
     </div>
 
+
+
     <!-- STEP 2 -->
     <div class="step-title">STEP 2. 파지력 확인이 '적용가능'인 경우 파지점, 오버행량 확인</div>
     <div class="step-flex-row">
@@ -336,7 +348,7 @@
                     <div class="force-value" id="currentGripPoint">- mm</div>
                 </div>
                 <div class="force-item">
-                    <div class="force-label">허용 파지점</div>
+                    <div class="force-label">허용 범위</div>
                     <div class="force-value" id="maxGripPoint">- mm</div>
                 </div>
             </div>
@@ -473,10 +485,6 @@
     </div>
 
     <div class="final-judgment">
-        <div class="final-images" id="finalImages">
-            <img src="images/NFD2_img2.PNG" alt="NFD2 이미지 1" style="width:auto; height:120px;">
-            <img src="images/NFD2_img4.PNG" alt="NFD2 이미지 2" style="width:auto; height:120px;">
-        </div>
         <div class="judgment-title">종합 판정</div>
         <div class="judgment-result" id="finalResult">값을 모두 입력하세요</div>
     </div>
@@ -648,7 +656,6 @@ function calculateResults() {
         }
         document.getElementById('finalResult').textContent = '값을 모두 입력하세요';
         document.getElementById('finalResult').style.backgroundColor = '#808080';
-        document.getElementById('finalImages').style.display = 'none';
         return;
     }
 
@@ -668,7 +675,7 @@ function calculateResults() {
         document.getElementById('progressStatus').style.color = '#4CAF50';
     } else {
         document.getElementById('progressBar').style.backgroundColor = '#f44336';
-        document.getElementById('progressStatus').textContent = '적용불가';
+        document.getElementById('progressStatus').textContent = '적용불가 (에어척 내경을 한 단계 크게 하거나 부하량을 축소하세요)';
         document.getElementById('progressStatus').style.color = '#f44336';
     }
 
@@ -687,7 +694,7 @@ function calculateResults() {
         document.getElementById('gripProgressStatus').style.color = '#4CAF50';
     } else {
         document.getElementById('gripProgressBar').style.backgroundColor = '#f44336';
-        document.getElementById('gripProgressStatus').textContent = '적용불가';
+        document.getElementById('gripProgressStatus').textContent = '적용불가 (에어척 내경을 한 단계 크게 하거나 파지점 또는 오버행량을 축소하세요)';
         document.getElementById('gripProgressStatus').style.color = '#f44336';
     }
 
@@ -699,14 +706,12 @@ function calculateResults() {
     if (isStep1Valid && isStep2Valid) {
         document.getElementById('finalResult').textContent = '적용가능';
         document.getElementById('finalResult').style.backgroundColor = '#4CAF50';
-        document.getElementById('finalImages').style.display = 'flex';
         document.getElementById('step3Section').style.display = 'block';
         if (orderNumberElement) orderNumberElement.classList.add('show');
         calculateStep3();
     } else {
         document.getElementById('finalResult').textContent = '적용불가';
         document.getElementById('finalResult').style.backgroundColor = '#f44336';
-        document.getElementById('finalImages').style.display = 'none';
         document.getElementById('step3Section').style.display = 'none';
         if (orderNumberElement) orderNumberElement.classList.remove('show');
     }

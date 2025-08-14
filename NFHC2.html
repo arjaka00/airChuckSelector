@@ -486,7 +486,7 @@
             </tr>
             <tr>
                 <td>부하량</td>
-                <td class="input-cell"><input type="number" id="load" step="0.001" min="0.001" max="1.8" placeholder="부하량 입력"></td>
+                <td class="input-cell"><input type="number" id="load" step="0.001" min="0.001" max="1.8" placeholder="0.001 ~ 1.8"></td>
                 <td>kg</td>
                 <td>적재 질량 입력 [0.001~1.8kg]</td>
             </tr>
@@ -498,15 +498,15 @@
             </tr>
             <tr>
                 <td>파지점 L</td>
-                <td class="input-cell"><input type="number" id="gripPoint" min="5" max="140" placeholder="파지점 입력"></td>
+                <td class="input-cell"><input type="number" id="gripPoint" min="5" max="140" placeholder="5 ~ 140"></td>
                 <td>mm</td>
                 <td>Rail 상면에서 부터 부하중심까지의 거리 [5~140mm]</td>
             </tr>
             <tr>
                 <td>오버행량 H</td>
-                <td class="input-cell"><input type="number" id="overhang" min="0" max="140" placeholder="오버행량 입력"></td>
+                <td class="input-cell"><input type="number" id="overhang" min="0" max="140" placeholder="0 ~ 140"></td>
                 <td>mm</td>
-                <td>Rail 상면에서 부터 부하중심까지의 거리 [0~140mm]</td>
+                <td>에어척 중심으로부터 부하중심까지 수평 거리 [0~140mm]</td>
             </tr>
             <!-- 조 옵션 -->
             <tr>
@@ -619,7 +619,7 @@
                     <div class="force-value" id="currentGripPoint">- mm</div>
                 </div>
                 <div class="force-item">
-                    <div class="force-label">허용 파지점</div>
+                    <div class="force-label">허용 범위</div>
                     <div class="force-value" id="maxGripPoint">- mm</div>
                 </div>
             </div>
@@ -1250,7 +1250,7 @@ function calculateResults() {
         document.getElementById('progressStatus').style.color = "#4CAF50";
     } else {
         document.getElementById('progressBar').style.backgroundColor = "#f44336";
-        document.getElementById('progressStatus').textContent = "적용불가";
+        document.getElementById('progressStatus').textContent = "적용불가 (에어척 내경을 한 단계 크게 하거나 부하량을 축소하세요)";
         document.getElementById('progressStatus').style.color = "#f44336";
     }
 
@@ -1274,7 +1274,7 @@ function calculateResults() {
         document.getElementById('gripProgressStatus').style.color = "#4CAF50";
     } else {
         document.getElementById('gripProgressBar').style.backgroundColor = "#f44336";
-        document.getElementById('gripProgressStatus').textContent = "적용불가";
+        document.getElementById('gripProgressStatus').textContent = "적용불가 (에어척 내경을 한 단계 크게 하거나 파지점 또는 오버행량을 축소하세요)";
         document.getElementById('gripProgressStatus').style.color = "#f44336";
     }
     
@@ -1493,5 +1493,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 </body>
-
 </html>
