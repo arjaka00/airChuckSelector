@@ -494,7 +494,7 @@
 // 상수 설정
 const GRAVITY = 9.8; // 요청 산식 준수
 
-// 압력 옵션 (D 고정, 각 내경 동일 범위 제공)
+// 압력 옵션 (D 고정, 각 내경 동일값 제공)
 const pressureOptions = {
     'D': {
         '020': [0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
@@ -698,23 +698,73 @@ function calculateResults() {
         document.getElementById('gripProgressStatus').style.color = '#f44336';
     }
 
+    // STEP 3 계산
+    const maxPitchingMoment = {
+        '020': 9.8,
+        '025': 18.6,
+        '032': 53.4,
+        '040': 98.4
+    };
+    const maxRollingMoment = {
+        '020': 5.1,
+        '025': 10.6,
+        '032': 30,
+        '040': 58
+    };
+
+    const maxVerticalLoad = {
+        '020': 362,
+        '025': 666,
+        '032': 1528,
+        '040': 2320
+    };
+
+    const wMax = maxVerticalLoad[diameter] || 0;
+    const allowedLoad = (wMax) / (safetyFactor || 1);
+    const loadRatio = (load * 9.8) / (allowedLoad || 1);
+
+    const momentFactor = safetyFactor < 10 ? 3 : 1;
+
+    const pitchingMoment = (load * 9.8 * gripPoint * momentFactor) / 1000;
+    const maxPitchingMomentValue = maxPitchingMoment[diameter] || 1;
+
+    const rollingMoment = (load * 9.8 * overhang * momentFactor) / 1000;
+    const maxRollingMomentValue = maxRollingMoment[diameter] || 1;
+
+    const altPitchingMoment = (load * 9.8 * overhang * momentFactor) / 1000; // Mp'
+    const altRollingMoment = (safetyFactor * 9.8 * gripPoint * momentFactor) / 1000; // Mr'
+
+    const mount = document.getElementById('mountOrientation').value;
+
+    const alpha2 = (mount === '수평벽취부')
+        ? (altPitchingMoment / (maxRollingMoment[diameter] || 1))
+        : (pitchingMoment / (maxPitchingMomentValue || 1));
+
+    const alpha3 = (mount === '수평벽취부')
+        ? (altRollingMoment / (maxRollingMomentValue || 1))
+        : (rollingMoment / (maxRollingMomentValue || 1));
+
+    // 총 부하율
+    const totalRatio = (isFinite(loadRatio) ? loadRatio : 0) + (isFinite(alpha2) ? alpha2 : 0) + (isFinite(alpha3) ? alpha3 : 0);
+
     // 종합 판정 및 표시
     const isStep1Valid = ratio < 100;
     const isStep2Valid = gripRatio <= 100;
     const orderNumberElement = document.querySelector('.order-value');
 
-    if (isStep1Valid && isStep2Valid) {
+    if (isStep1Valid && isStep2Valid && totalRatio <= 1) {
         document.getElementById('finalResult').textContent = '적용가능';
         document.getElementById('finalResult').style.backgroundColor = '#4CAF50';
-        document.getElementById('step3Section').style.display = 'block';
         if (orderNumberElement) orderNumberElement.classList.add('show');
-        calculateStep3();
     } else {
         document.getElementById('finalResult').textContent = '적용불가';
         document.getElementById('finalResult').style.backgroundColor = '#f44336';
-        document.getElementById('step3Section').style.display = 'none';
         if (orderNumberElement) orderNumberElement.classList.remove('show');
     }
+    
+    // STEP3은 항상 표시
+    document.getElementById('step3Section').style.display = 'block';
+    calculateStep3();
 }
 
 // 이벤트
@@ -782,7 +832,7 @@ function calculateStep3() {
     const momentFactor = safetyFactor < 10 ? 3 : 1;
 
     const wMax = maxVerticalLoad[diameter] || 0;
-    const allowedLoad = (wMax) / (loadFactor || 1);
+    const allowedLoad = (wMax) / (safetyFactor || 1);
     const loadRatio = (load * 9.8) / (allowedLoad || 1);
 
     const pitchingForce = load * momentFactor * 9.8;

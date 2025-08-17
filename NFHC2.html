@@ -1278,13 +1278,71 @@ function calculateResults() {
         document.getElementById('gripProgressStatus').style.color = "#f44336";
     }
     
-    // 종합 판정 (STEP 1과 STEP 2 모두 적용가능이어야 함)
+    // STEP 3 계산을 위한 변수들
+    const maxVerticalLoad = {
+        '008': 62,
+        '012': 98,
+        '016': 151,
+        '020': 299
+    };
+
+    const maxLateralLoad = {
+        '008': 15,
+        '012': 33,
+        '016': 64,
+        '020': 133
+    };
+
+    const maxPitchingMoment = {
+        '008': 0.28,
+        '012': 0.68,
+        '016': 1.35,
+        '020': 2.37
+    };
+
+    const maxYawingMoment = {
+        '008': 0.28,
+        '012': 0.68,
+        '016': 1.35,
+        '020': 2.37
+    };
+
+    const maxRollingMoment = {
+        '008': 0.56,
+        '012': 1.36,
+        '016': 2.71,
+        '020': 4.75
+    };
+
+    const loadFactor = safetyFactor < 10 ? 0.5 : 1;
+    const momentFactor = safetyFactor < 10 ? 4 : 3;
+
+    const wMax = maxVerticalLoad[diameter];
+    const allowedLoad = loadFactor * wMax;
+    const loadRatio = (load * 9.8) / allowedLoad;
+
+    const pitchingMoment = (load * 9.8 * gripPoint * momentFactor) / 1000;
+    const maxPitchingMomentValue = maxPitchingMoment[diameter];
+    const pitchingRatio = pitchingMoment / maxPitchingMomentValue;
+
+    const yawingMoment = (load * 9.8 * overhang * momentFactor) / 1000;
+    const maxYawingMomentValue = maxYawingMoment[diameter];
+    const yawingRatio = yawingMoment / maxYawingMomentValue;
+
+    const rollingMoment = (load * 9.8 * gripPoint * momentFactor) / 1000;
+    const maxRollingMomentValue = maxRollingMoment[diameter];
+    const rollingRatio = rollingMoment / maxRollingMomentValue;
+
+    // 총 부하율 계산
+    const totalRatio = (isFinite(loadRatio) ? loadRatio : 0) + (isFinite(pitchingRatio) ? pitchingRatio : 0) + (isFinite(yawingRatio) ? yawingRatio : 0) + (isFinite(rollingRatio) ? rollingRatio : 0);
+
+    // 종합 판정 (STEP 1, STEP 2, 총 부하율 모두 확인)
     const isStep1Valid = ratio < 100;
     const isStep2Valid = gripRatio <= 100;
     
     const orderNumberElement = document.querySelector('.order-value');
     
-    if (isStep1Valid && isStep2Valid) {
+    if (isStep1Valid && isStep2Valid && totalRatio <= 1) {
         document.getElementById('finalResult').textContent = "적용가능";
         document.getElementById('finalResult').style.backgroundColor = "#4CAF50";
         
@@ -1292,11 +1350,6 @@ function calculateResults() {
         if (orderNumberElement) {
             orderNumberElement.classList.add('show');
         }
-        
-        // STEP 3 표시 및 계산
-        document.getElementById('step3Section').style.display = 'block';
-        calculateStep3();
-        
     } else {
         document.getElementById('finalResult').textContent = "적용불가";
         document.getElementById('finalResult').style.backgroundColor = "#f44336";
@@ -1305,10 +1358,11 @@ function calculateResults() {
         if (orderNumberElement) {
             orderNumberElement.classList.remove('show');
         }
-        
-        // STEP 3 숨김
-        document.getElementById('step3Section').style.display = 'none';
     }
+    
+    // STEP3은 항상 표시
+    document.getElementById('step3Section').style.display = 'block';
+    calculateStep3();
 }
 
 // STEP 3 계산 함수 수정 (정확한 공식 적용)
