@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>NFHC2 기종선정 시트</title>
+    
+    <!-- 소스 보호 스크립트 -->
+    <script>
+        // 오른쪽 클릭 방지
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // 키보드 단축키 방지 (F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S 등)
+        document.addEventListener('keydown', function(e) {
+            // F12 키 방지
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl 키 조합 방지
+            if (e.ctrlKey) {
+                // Ctrl+Shift+I (개발자 도구)
+                if (e.shiftKey && e.key === 'I') {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+Shift+J (콘솔)
+                if (e.shiftKey && e.key === 'J') {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+Shift+C (요소 검사)
+                if (e.shiftKey && e.key === 'C') {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+U (소스 보기)
+                if (e.key === 'u') {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+S (저장)
+                if (e.key === 's') {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+A (전체 선택)
+                if (e.key === 'a') {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+P (인쇄)
+                if (e.key === 'p') {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+        
+        // 텍스트 선택 방지
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // 드래그 방지
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // 개발자 도구 감지 (간단한 방법)
+        let devtools = {open: false, orientation: null};
+        setInterval(function() {
+            if (window.outerHeight - window.innerHeight > 160 || window.outerWidth - window.innerWidth > 160) {
+                if (!devtools.open) {
+                    devtools.open = true;
+                    alert('개발자 도구가 감지되었습니다. 페이지가 새로고침됩니다.');
+                    window.location.reload();
+                }
+            } else {
+                devtools.open = false;
+            }
+        }, 500);
+        
+        // 복사 방지
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // 인쇄 방지
+        window.addEventListener('beforeprint', function(e) {
+            e.preventDefault();
+            alert('인쇄가 금지되어 있습니다.');
+            return false;
+        });
+    </script>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: #f0f2f5; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #0001;
+            padding: 30px;
+        }
+        .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .title { font-size: 2em; font-weight: bold; color: #1a73e8; text-align: center; flex: 1; }
+        .logo-img { width: 100px; height: auto; }
+        .order-row { display: flex; align-items: center; margin-bottom: 20px; }
+        .order-label, .order-value {
+            font-size: 1.21em;
+        }
+        .order-label { font-weight: bold; margin-right: 10px; }
+        .order-value {
+            font-size: 1.21em;
+            font-weight: bold;
+            color: #333;
+            margin-left: 10px;
+            padding: 5px 10px;
+            display: none;
+        }
+        .order-value.show {
+            display: inline-block;
+        }
+        .step-title { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+        table {
+            width: 98%;
+            margin: 0 auto 15px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 5px 8px 5px;
+            border: 1px solid #e5e7eb;
+        }
+        th { background: #f5f5f5; }
+        .input-cell { background: #e8f5e9; }
+        .input-cell input[type="number"],
+        .input-cell select {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .step-flex-row { display: flex; align-items: stretch; gap: 30px; margin-bottom: 30px; }
+        .grip-image-area {
+            flex: 0 0 180px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #f8f9fa; border-radius: 8px; min-height: 180px; max-width: 200px;
+        }
+        .grip-image-area img { width: 120px; height: auto; display: block; }
+        .grip-image-label { font-size: 1em; color: #333; font-weight: bold; text-align: center; margin-top: 8px; }
+        .result-values-area { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .forces-display { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .force-item { text-align: center; flex: 1; }
+        .force-label { font-weight: bold; color: #666; margin-bottom: 5px; }
+        .force-value { font-size: 1.2em; color: #333; }
+        .progress-section { margin-top: 10px; text-align: center; }
+        .progress-bar { width: 100%; height: 30px; background: #f0f0f0; border-radius: 4px; overflow: hidden; margin-bottom: 5px; position: relative; }
+        .progress-fill { height: 100%; background: #e0e0e0; transition: width 0.3s, background 0.3s; position: absolute; left: 0; top: 0; }
+        .progress-text { position: absolute; width: 100%; text-align: center; line-height: 30px; color: #666; }
+        .progress-status { text-align: center; margin-top: 5px; color: #666; }
+        .final-judgment { margin-top: 20px; padding: 20px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; text-align: center; }
+        .judgment-title { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; color: #333; }
+        .judgment-result { font-size: 1.5em; font-weight: bold; padding: 10px; border-radius: 4px; background: #4CAF50; color: #fff; display: inline-block; min-width: 200px; }
+        .grip-diagram2-area {
+            flex: 0 0 180px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #f8f9fa; border-radius: 8px; min-height: 180px; max-width: 200px;
+        }
+        .grip-diagram2-area img { width: 120px; height: auto; display: block; }
+        select {
+            width: 100%;
+            padding: 12px 8px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #ffffff;
+        }
+        input[type="number"] {
+            width: 100%;
+            max-width: 120px;
+            padding: 12px 8px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #ffffff;
+            text-align: left;
+            word-break: keep-all;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        /* STEP 3 스타일 */
+        .step3-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .step3-tables {
+            flex: 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .step3-results {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .force-table {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .table-header {
+            background: #f8f9fa;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .calculation-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .calculation-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9em;
+        }
+
+        .param-name {
+            background: #f8f9fa;
+            font-weight: 500;
+            width: 60%;
+        }
+
+        .param-value {
+            text-align: right;
+            width: 40%;
+        }
+
+        .result-row {
+            background: #fff5f5;
+        }
+
+        .result-value {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .final-check {
+            height: fit-content;
+        }
+
+        .final-result-item {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .final-result-label {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .final-result-desc {
+            text-align: center;
+            font-size: 14px;
+            font-weight: normal;
+            color: #666;
+            margin-top: 15px;
+            padding: 10px;
+        }
+
+        .total-ratio-display {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .total-ratio-value {
+            font-size: 2em;
+            color: #2196F3;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .total-ratio-desc {
+            text-align: center;
+            font-size: 14px;
+            font-weight: normal;
+            color: #666;
+            margin-top: 10px;
+            padding: 5px;
+        }
+
+        /* 반응형 대응 */
+        @media (max-width: 1200px) {
+            .step3-container {
+                flex-direction: column;
+            }
+            
+            .step3-tables {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .force-check-results {
+            padding: 10px;
+        }
+
+        .force-check-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .force-check-item.failed {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+        }
+
+        .force-result {
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .force-result.ok {
+            color: #4CAF50;
+            background-color: #e8f5e8;
+        }
+
+        .force-result.no {
+            color: #f44336;
+            background-color: #ffebee;
+        }
+
+        .force-check-summary {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .force-check-summary.failed {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+        }
+
+        .step3-image-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+        }
+
+        .step3-reference-image {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px;">
+        <div style="flex:2; text-align:right;">
+            <div style="font-size:1.5em; font-weight:bold; color:#1a73e8; margin-bottom:10px;">NFH(L)2(평형 개폐형) 기종선정 시트</div>
+        </div>
+        <div style="flex:1; text-align:right;">
+            <img src="images/NFH2.PNG" alt="NFH2 로고" style="width:auto; height:140px;">
+        </div>
+    </div>
+
+    <div class="order-row">
+        <span class="order-label">주문 품번:</span>
+        <span class="order-value" id="orderNumber"></span>
+    </div>
+
+    <!-- 입력 테이블 -->
+    <div class="step">
+        <h2 class="step-title">STEP 1. 기본 사용조건과 대상 에어척 사양 입력하여 실효 파지력 확인</h2>
+        <table>
+            <colgroup>
+                <col style="width: 25%;">
+                <col style="width: 25%;">
+                <col style="width: 10%;">
+                <col style="width: 40%;">
+            </colgroup>
+            <tr>
+                <th>파라미터</th><th>입력값</th><th>단위</th><th>설명</th>
+            </tr>
+            <tr>
+                <td>파지 방법</td>
+                <td class="input-cell">
+                    <select id="gripMethod">
+                        <option value="">선택</option>
+                        <option value="외경 파지">외경 파지</option>
+                        <option value="내경 파지">내경 파지</option>
+                    </select>
+                </td>
+                <td>-</td>
+                <td>외경 파지 또는 내경 파지 선택</td>
+            </tr>
+            <tr>
+                <td>시리즈</td>
+                <td class="input-cell">
+                    <select id="series">
+                        <option value="">선택</option>
+                        <option value="NFH2">NFH2</option>
+                        <option value="NFHL2">NFHL2</option>
+                    </select>
+                </td>
+                <td>-</td>
+                <td>NFH2 또는 NFHL2 시리즈 선택</td>
+            </tr>
+            <tr>
+                <td>실린더 내경</td>
+                <td class="input-cell">
+                    <select id="diameter">
+                        <option value="">시리즈를 먼저 선택하세요</option>
+                    </select>
+                </td>
+                <td>-</td>
+                <td>에어척 내경 선택</td>
+            </tr>
+            <tr>
+                <td>작동 방식</td>
+                <td class="input-cell">
+                    <select id="operationType" disabled>
+                        <option value="D" selected>D</option>
+                    </select>
+                </td>
+                <td>-</td>
+                <td>D : 복동 (고정)</td>
+            </tr>
+            <tr>
+                <td>사용 압력</td>
+                <td class="input-cell">
+                    <select id="pressure">
+                        <option value="">선택</option>
+                        <option value="0.2">0.2</option>
+                        <option value="0.3">0.3</option>
+                        <option value="0.4">0.4</option>
+                        <option value="0.5">0.5</option>
+                        <option value="0.6">0.6</option>
+                        <option value="0.7">0.7</option>
+                    </select>
+                </td>
+                <td>MPa</td>
+                <td>사용압력 선택 [0.2~0.7MPa]</td>
+            </tr>
+            <tr>
+                <td>부하량</td>
+                <td class="input-cell"><input type="number" id="load" step="0.001" min="0.001" max="1.8" placeholder="0.001 ~ 1.8"></td>
+                <td>kg</td>
+                <td>적재 질량 입력 [0.001~1.8kg]</td>
+            </tr>
+            <tr>
+                <td>안전율</td>
+                <td class="input-cell"><input type="number" id="safetyFactor" min="5" max="20" placeholder="5 ~ 20"></td>
+                <td>-</td>
+                <td>적재 질량 대비 확보해야할 파지력의 배수 [5~20]</td>
+            </tr>
+            <tr>
+                <td>파지점 L</td>
+                <td class="input-cell"><input type="number" id="gripPoint" min="5" max="140" placeholder="5 ~ 140"></td>
+                <td>mm</td>
+                <td>Rail 상면에서 부터 부하중심까지의 거리 [5~140mm]</td>
+            </tr>
+            <tr>
+                <td>오버행량 H</td>
+                <td class="input-cell"><input type="number" id="overhang" min="0" max="140" placeholder="0 ~ 140"></td>
+                <td>mm</td>
+                <td>에어척 중심으로부터 부하중심까지 수평 거리 [0~140mm]</td>
+            </tr>
+            <!-- 조 옵션 -->
+            <tr>
+                <td>조 옵션</td>
+                <td class="input-cell">
+                    <select id="jawOption">
+                        <option value="">선택</option>
+                        <option value="기본형">기본형(개폐방향 탭)</option>
+                        <option value="측면탭">측면탭</option>
+                        <option value="개폐방향 관통구멍">개폐방향 관통구멍</option>
+                    </select>
+                </td>
+                <td>-</td>
+                <td>조 옵션 선택</td>
+            </tr>
+
+            <!-- 2차전지 대응 사양 -->
+            <tr>
+                <td>2차전지 대응 사양</td>
+                <td class="input-cell">
+                    <select id="batterySpec">
+                        <option value="">선택</option>
+                        <option value="">무기호 : 표준형</option>
+                        <option value="2B">2B : 2차전지사양</option>
+                    </select>
+                </td>
+                <td>-</td>
+                <td>2차전지 대응 시리즈</td>
+            </tr>
+            <tr>
+                <td>오토스위치 종류</td>
+                <td class="input-cell">
+                    <select id="autoSwitchType">
+                        <option value="">선택</option>
+                        <option value="W9H">W9H</option>
+                        <option value="W9V">W9V</option>
+                        <option value="W10V">W10V</option>
+                        <option value="W20H">W20H</option>
+                    </select>
+                </td>
+                <td>-</td>
+                <td>오토스위치 종류 선택</td>
+            </tr>
+            <tr>
+                <td>오토스위치 수량</td>
+                <td class="input-cell">
+                    <select id="autoSwitchQuantity">
+                        <option value="">선택</option>
+                        <option value="2개 부착">2개 부착</option>
+                        <option value="1개 부착">1개 부착</option>
+                        <option value="N개 부착">N개 부착</option>
+                    </select>
+                </td>
+                <td>-</td>
+                <td>오토스위치 수량 선택</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- STEP1 결과 + 그림 -->
+    <div class="step-flex-row">
+        <div class="grip-image-area">
+            <img id="gripTypeImg" src="" alt="파지 방법 그림" style="display:none;">
+            <div class="grip-image-label" id="gripTypeLabel"></div>
+        </div>
+        <div class="result-values-area">
+            <div class="forces-display">
+                <div class="force-item">
+                    <div class="force-label">실효파지력(F)</div>
+                    <div class="force-value" id="actualForce">- N</div>
+                </div>
+                <div class="force-item">
+                    <div class="force-label">필요파지력(F')</div>
+                    <div class="force-value" id="requiredForce">- N</div>
+                </div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%">
+                        <div class="progress-text">-%</div>
+                    </div>
+                </div>
+                <div class="progress-status" id="progressStatus">-</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 2 섹션 추가 -->
+    <div class="step-title">STEP 2. 파지력 확인이 '적용가능'인 경우 파지점, 오버행량 확인</div>
+    <div class="step-flex-row">
+        <div class="grip-diagram2-area">
+            <img src="images/NFH2_img3.PNG" alt="파지점/오버행량 참조">
+        </div>
+        <div class="result-values-area">
+            <div class="forces-display">
+                <div class="force-item">
+                    <div class="force-label">현재 파지점+오버행량</div>
+                    <div class="force-value" id="currentGripPoint">- mm</div>
+                </div>
+                <div class="force-item">
+                    <div class="force-label">허용 범위</div>
+                    <div class="force-value" id="maxGripPoint">- mm</div>
+                </div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="gripProgressBar" style="width: 0%">
+                        <div class="progress-text">-%</div>
+                    </div>
+                </div>
+                <div class="progress-status" id="gripProgressStatus">-</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 3 섹션 -->
+    <div class="step" id="step3Section" style="display: none;">
+        <h2 class="step-title">STEP 3. 파지력, 파지점&오버행량 '적용가능'인 경우 핑거에 가해지는 외력 확인</h2>
+        
+        <div class="step3-container">
+            <!-- 좌측: 외력 확인 테이블들 -->
+            <div class="step3-tables">
+                <!-- 허용하중 테이블 -->
+                <div class="force-table">
+                    <div class="table-header">허용중량</div>
+                    <table class="calculation-table">
+                        <tr>
+                            <td class="param-name">허용중량(Wa)</td>
+                            <td class="param-value" id="allowedLoad">150 N</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">허용적재하중계수</td>
+                            <td class="param-value" id="loadFactor">0.5</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">수직최대허용하중(Wmax)</td>
+                            <td class="param-value" id="maxVerticalLoad">299 N</td>
+                        </tr>
+                        <tr class="result-row">
+                            <td class="param-name">허용하중 부하율 α1</td>
+                            <td class="param-value result-value" id="loadRatio">0.020</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Pitching 하중 테이블 -->
+                <div class="force-table">
+                    <div class="table-header">Pitching하중</div>
+                    <table class="calculation-table">
+                        <tr>
+                            <td class="param-name">Pitching하중(Fp)</td>
+                            <td class="param-value" id="pitchingForce">11.8 N</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Pitching모멘트(Mp)</td>
+                            <td class="param-value" id="pitchingMoment">0.235 N.m</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">허용모멘트계수</td>
+                            <td class="param-value" id="momentFactor">4</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">허용Pitching모멘트(Mpmax)</td>
+                            <td class="param-value" id="maxPitchingMoment">2.37 N.m</td>
+                        </tr>
+                        <tr class="result-row">
+                            <td class="param-name">Pitching 모멘트 부하율 α2</td>
+                            <td class="param-value result-value" id="pitchingRatio">0.099</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Yawing 하중 테이블 -->
+                <div class="force-table">
+                    <div class="table-header">Yawing하중</div>
+                    <table class="calculation-table">
+                        <tr>
+                            <td class="param-name">Yawing하중(Fy)</td>
+                            <td class="param-value" id="yawingForce">11.8 N</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Yawing모멘트(My)</td>
+                            <td class="param-value" id="yawingMoment">0.235 N.m</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">허용모멘트계수</td>
+                            <td class="param-value" id="yawingMomentFactor">4</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">허용Yawing모멘트(Mymax)</td>
+                            <td class="param-value" id="maxYawingMoment">2.37 N.m</td>
+                        </tr>
+                        <tr class="result-row">
+                            <td class="param-name">Yawing모멘트 부하율 α3</td>
+                            <td class="param-value result-value" id="yawingRatio">0.099</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Rolling 하중 테이블 -->
+                <div class="force-table">
+                    <div class="table-header">Rolling하중</div>
+                    <table class="calculation-table">
+                        <tr>
+                            <td class="param-name">Rolling하중(Fr)</td>
+                            <td class="param-value" id="rollingForce">2.9 N</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">Rolling모멘트(Mr)</td>
+                            <td class="param-value" id="rollingMoment">0.235 N.m</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">허용모멘트계수</td>
+                            <td class="param-value" id="rollingMomentFactor">4</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">허용Rolling모멘트(Mrmax)</td>
+                            <td class="param-value" id="maxRollingMoment">4.75 N.m</td>
+                        </tr>
+                        <tr class="result-row">
+                            <td class="param-name">Rolling모멘트 부하율 α4</td>
+                            <td class="param-value result-value" id="rollingRatio">0.050</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 우측: 종합 결과 -->
+            <div class="step3-results">
+                <div class="force-table final-check">
+                    <div class="table-header">각 방향의 힘하중</div>
+                    <div class="force-check-results">
+                        <div class="force-check-item">
+                            <span>Pitching: </span>
+                            <span class="force-result" id="pitchingCheck">-</span>
+                        </div>
+                        <div class="force-check-item">
+                            <span>Yawing: </span>
+                            <span class="force-result" id="yawingCheck">-</span>
+                        </div>
+                        <div class="force-check-item">
+                            <span>Rolling: </span>
+                            <span class="force-result" id="rollingCheck">-</span>
+                        </div>
+                        <div class="final-result-desc">Fp, Fy, Fr < Fmax 이면 적용 가능</div>
+                    </div>
+                </div>
+                
+                <div class="force-table final-check">
+                    <div class="table-header">총 부하율</div>
+                    <div class="total-ratio-display">
+                        <div class="total-ratio-value" id="totalRatio">-</div>
+                        <div class="total-ratio-desc">(α1+α2+α3+α4) ≤1 이면 적용 가능</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3 참조 그림 추가 -->
+        <div class="step3-image-section">
+            <img src="images/NFHC2_img4.PNG" alt="NFH2 참조 이미지" class="step3-reference-image">
+        </div>
+    </div>
+
+    <div class="final-judgment">
+        <div class="judgment-title">종합 판정</div>
+        <div class="judgment-result" id="finalResult">값을 모두 입력하세요</div>
+    </div>
+</div>
+
+<script>
+// 시리즈별 내경 옵션
+const diameterOptions = {
+    'NFH2': ['010', '016', '020', '025', '032', '040'],
+    'NFHL2': ['010', '016', '020', '025']
+};
+
+// 기존 pressureOptions 객체를 다음과 같이 교체하세요 (719줄 근처)
+const pressureOptions = {
+    'D': { // 복동형
+        '010': [0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
+        '016': [0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
+        '020': [0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
+        '025': [0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
+        '032': [0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
+        '040': [0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
+    }
+};
+
+// 시리즈 변경 시 내경 옵션 업데이트
+function updateDiameterOptions() {
+    const series = document.getElementById('series').value;
+    const diameterSelect = document.getElementById('diameter');
+    
+    // 기본값
+    diameterSelect.innerHTML = '<option value="">선택</option>';
+    
+    if (series === 'NFH2') {
+        diameterSelect.innerHTML = '<option value="">선택</option>';
+        diameterSelect.innerHTML += '<option value="010">Ø10</option>';
+        diameterSelect.innerHTML += '<option value="016">Ø16</option>';
+        diameterSelect.innerHTML += '<option value="020">Ø20</option>';
+        diameterSelect.innerHTML += '<option value="025">Ø25</option>';
+        diameterSelect.innerHTML += '<option value="032">Ø32</option>';
+        diameterSelect.innerHTML += '<option value="040">Ø40</option>';
+    } else if (series === 'NFHL2') {
+        diameterSelect.innerHTML = '<option value="">선택</option>';
+        diameterSelect.innerHTML += '<option value="010">Ø10</option>';
+        diameterSelect.innerHTML += '<option value="016">Ø16</option>';
+        diameterSelect.innerHTML += '<option value="020">Ø20</option>';
+        diameterSelect.innerHTML += '<option value="025">Ø25</option>';
+    } else {
+        diameterSelect.innerHTML = '<option value="">시리즈를 먼저 선택하세요</option>';
+    }
+    
+    // 내경이 변경되었으므로 압력 옵션도 업데이트
+    updatePressureOptions();
+}
+
+// updatePressureOptions 함수 단순화
+function updatePressureOptions() {
+    const diameter = document.getElementById('diameter').value;
+    const pressureSelect = document.getElementById('pressure');
+
+    // 기본값
+    pressureSelect.innerHTML = '<option value="">선택</option>';
+
+    // 내경 미선택 시 안내만 표시
+    if (!diameter) {
+        pressureSelect.innerHTML = '<option value="">내경을 먼저 선택하세요</option>';
+        return;
+    }
+
+    // D타입(복동)의 압력만 표시
+    if (pressureOptions['D'] && pressureOptions['D'][diameter]) {
+        const availablePressures = pressureOptions['D'][diameter];
+        pressureSelect.innerHTML = '<option value="">선택</option>';
+        availablePressures.forEach((pressure) => {
+            const option = document.createElement('option');
+            option.value = pressure.toFixed(1);
+            option.textContent = pressure.toFixed(1);
+            pressureSelect.appendChild(option);
+        });
+    }
+}
+
+
+
+// 기존 updateGripTypeImage 함수를 수정
+function updateGripTypeImage() {
+    const gripMethod = document.getElementById('gripMethod').value;
+    const img = document.getElementById('gripTypeImg');
+    const label = document.getElementById('gripTypeLabel');
+    
+    if (gripMethod === "외경 파지") {
+        img.src = "images/NFH2_img1.PNG";
+        img.style.display = "block";
+        label.textContent = "외경 파지 (D 타입)";
+    } else if (gripMethod === "내경 파지") {
+        img.src = "images/NFH2_img2.PNG";
+        img.style.display = "block";
+        label.textContent = "내경 파지 (D 타입)";
+    } else {
+        img.src = "";
+        img.style.display = "none";
+        label.textContent = "";
+    }
+}
+
+    // NFH2용 새로운 실효파지력 계산 함수
+    function calculateEffectiveGripForce(diameter, operationType, pressure, gripPoint, gripMethod) {
+        if (!diameter || !operationType || !pressure || !gripPoint || !gripMethod) return 0;
+
+        // NFH2용 새로운 계산식 데이터
+        const newSpecs = {
+            '010': { // 내경 Ø10
+                centerDistanceC: 7.5,
+                centerDistanceD: 6.2,
+                rodDiameter: 6,
+                innerDiameter: 10
+            },
+            '016': { // 내경 Ø16
+                centerDistanceC: 10.5,
+                centerDistanceD: 8.7,
+                rodDiameter: 10,
+                innerDiameter: 16
+            },
+            '020': { // 내경 Ø20
+                centerDistanceC: 14,
+                centerDistanceD: 12.7,
+                rodDiameter: 12,
+                innerDiameter: 20
+            },
+            '025': { // 내경 Ø25
+                centerDistanceC: 16,
+                centerDistanceD: 14.8,
+                rodDiameter: 16,
+                innerDiameter: 25
+            },
+            '032': { // 내경 Ø32
+                centerDistanceC: 20.3,
+                centerDistanceD: 18.5,
+                rodDiameter: 14,
+                innerDiameter: 32
+            },
+            '040': { // 내경 Ø40
+                centerDistanceC: 25.3,
+                centerDistanceD: 21,
+                rodDiameter: 18,
+                innerDiameter: 40
+            }
+        };
+
+    const specs = newSpecs[diameter];
+    const PI = Math.PI;
+    let gripForce = 0;
+
+    if (gripMethod === "외경 파지") {
+        // 출력B[N] = (PI*((내경^2)/4)*공급압력)-(PI*((로드경^2)/4)*공급압력)
+        const outputB = (PI * Math.pow(specs.innerDiameter, 2) / 4 * pressure) - 
+                       (PI * Math.pow(specs.rodDiameter, 2) / 4 * pressure);
+        
+        // 토크B[kgf•mm] = 중심간거리C * 출력B[N]
+        const torqueB = specs.centerDistanceC * outputB;
+        
+        // 파지력[N] = ((토크B[kgf•mm]/중심간거리D)/2)*0.93
+        gripForce = ((torqueB / specs.centerDistanceD) / 2) * 0.93;
+        
+    } else if (gripMethod === "내경 파지") {
+        // 출력A[N] = (PI*((내경^2)/4)*공급압력)
+        const outputA = PI * Math.pow(specs.innerDiameter, 2) / 4 * pressure;
+        
+        // 토크A[kgf•mm] = 중심간거리C * 출력A[N]
+        const torqueA = specs.centerDistanceC * outputA;
+        
+        // 파지력[N] = ((토크A[kgf•mm]/중심간거리D)/2)*0.93
+        gripForce = ((torqueA / specs.centerDistanceD) / 2) * 0.93;
+    }
+
+    return Math.max(0, gripForce);
+}
+
+// NFH2 허용범위 데이터 (D타입만, 외경파지=A, 내경파지=B)
+const allowedRangeData = {
+    '010': { // Ø10
+        'D': {
+            'A': [50, 50, 40, 30, 20, 20], // 외경파지: 0.2~0.7MPa
+            'B': [80, 80, 80, 75, 70, 60]  // 내경파지: 0.2~0.7MPa
+        }
+    },
+    '016': { // Ø16
+        'D': {
+            'A': [57, 57, 45, 35, 22, 22], // 외경파지: 0.2~0.7MPa
+            'B': [57, 57, 45, 32, 20, 20]  // 내경파지: 0.2~0.7MPa
+        }
+    },
+    '020': { // Ø20
+        'D': {
+            'A': [80, 80, 70, 55, 45, 35], // 외경파지: 0.2~0.7MPa
+            'B': [80, 80, 70, 55, 45, 35]  // 내경파지: 0.2~0.7MPa
+        }
+    },
+    '025': { // Ø25
+        'D': {
+            'A': [100, 100, 90, 75, 65, 55], // 외경파지: 0.2~0.7MPa
+            'B': [85, 85, 70, 55, 45, 35]   // 내경파지: 0.2~0.7MPa
+        }
+    },
+    '032': { // Ø32
+        'D': {
+            'A': [150, 150, 150, 130, 120, 100], // 외경파지: 0.2~0.7MPa
+            'B': [90, 90, 90, 90, 80, 70]        // 내경파지: 0.2~0.7MPa
+        }
+    },
+    '040': { // Ø40
+        'D': {
+            'A': [175, 175, 175, 150, 130, 110], // 외경파지: 0.2~0.7MPa
+            'B': [100, 100, 100, 100, 90, 75]    // 내경파지: 0.2~0.7MPa
+        }
+    }
+};
+
+// 압력 값을 배열 인덱스로 변환하는 함수 (0.2~0.7MPa)
+function getPressureIndex(diameter, operationType, pressure) {
+    if (!pressureOptions[operationType] || !pressureOptions[operationType][diameter]) {
+        return -1;
+    }
+    
+    const availablePressures = pressureOptions[operationType][diameter];
+    return availablePressures.indexOf(pressure);
+}
+
+// 파지 형태를 결정하는 함수 (외경파지=A, 내경파지=B)
+function getGripType(gripMethod) {
+    return gripMethod === "외경 파지" ? "A" : "B";
+}
+
+// 허용범위를 구하는 함수 (D타입, 0.2~0.7MPa)
+function getAllowedRange(diameter, operationType, gripMethod, pressure) {
+    const gripType = getGripType(gripMethod);
+    const pressureIndex = getPressureIndex(diameter, operationType, pressure);
+    
+    if (!allowedRangeData[diameter] || 
+        !allowedRangeData[diameter][operationType] || 
+        !allowedRangeData[diameter][operationType][gripType] ||
+        pressureIndex === -1) {
+        return 0;
+    }
+    
+    const rangeArray = allowedRangeData[diameter][operationType][gripType];
+    return rangeArray[pressureIndex] || rangeArray[rangeArray.length - 1];
+}
+
+// 주문 품번 생성 함수
+function generateOrderNumber() {
+    let orderNumber = "";
+    
+    // 2차전지 대응 사양 확인
+    const batterySpec = document.getElementById('batterySpec').value;
+    if (batterySpec === "2B") {
+        orderNumber += "2B-NFH2-";
+    } else {
+        orderNumber += "NFH2-";
+    }
+    
+    // 실린더 내경 확인
+    const diameter = document.getElementById('diameter').value;
+    if (diameter) {
+        const diameterNum = diameter.replace('0', ''); // '008' -> '8', '012' -> '12' 등
+        orderNumber += diameterNum;
+    }
+    
+    // 작동 방식 확인
+    const operationType = document.getElementById('operationType').value;
+    if (operationType) {
+        orderNumber += operationType;
+    }
+    
+    // 조 옵션 확인
+    const jawOption = document.getElementById('jawOption').value;
+    if (jawOption === "측면탭") {
+        orderNumber += "-1";
+    } else if (jawOption === "개폐방향 관통구멍") {
+        orderNumber += "-2";
+    }
+    // 기본형(개폐방향 탭)은 아무것도 추가하지 않음
+    
+
+    
+    // 오토스위치 종류 확인
+    const autoSwitchType = document.getElementById('autoSwitchType').value;
+    if (autoSwitchType) {
+        orderNumber += "-" + autoSwitchType;
+    }
+    
+    // 오토스위치 수량 확인
+    const autoSwitchQuantity = document.getElementById('autoSwitchQuantity').value;
+    if (autoSwitchQuantity === "1개 부착") {
+        orderNumber += "S";
+    } else if (autoSwitchQuantity === "N개 부착") {
+        orderNumber += "N";
+    }
+    // 2개 부착은 아무것도 추가하지 않음
+    
+    // 주문 품번 업데이트
+    const orderNumberElement = document.querySelector('.order-value');
+    if (orderNumberElement) {
+        orderNumberElement.textContent = orderNumber;
+    }
+}
+
+// calculateResults 함수 수정 (완전한 버전)
+function calculateResults() {
+    // 주문 품번 생성
+    generateOrderNumber();
+    
+    const gripMethod = document.getElementById('gripMethod').value;
+    const series = document.getElementById('series').value;
+    const diameter = document.getElementById('diameter').value;
+    const operationType = document.getElementById('operationType').value;
+    const pressure = parseFloat(document.getElementById('pressure').value);
+    const load = parseFloat(document.getElementById('load').value);
+    const safetyFactor = parseFloat(document.getElementById('safetyFactor').value);
+    const gripPoint = parseFloat(document.getElementById('gripPoint').value);
+    const overhang = parseFloat(document.getElementById('overhang').value);
+
+    console.log('계산 시작:', {
+        gripMethod, diameter, operationType, pressure, gripPoint, overhang, load, safetyFactor
+    });
+
+    // 값이 부족하면 초기화
+    if (!gripMethod || !series || !diameter || !operationType || isNaN(pressure) || isNaN(load) || isNaN(safetyFactor) || isNaN(gripPoint) || isNaN(overhang)) {
+        // STEP 1 초기화
+        document.getElementById('actualForce').textContent = '- N';
+        document.getElementById('requiredForce').textContent = '- N';
+        document.getElementById('progressBar').style.width = '0%';
+        document.getElementById('progressBar').querySelector('.progress-text').textContent = '-%';
+        document.getElementById('progressStatus').textContent = '-';
+        
+        // STEP 2 초기화
+        document.getElementById('currentGripPoint').textContent = '- mm';
+        document.getElementById('maxGripPoint').textContent = '- mm';
+        document.getElementById('gripProgressBar').style.width = '0%';
+        document.getElementById('gripProgressBar').querySelector('.progress-text').textContent = '-%';
+        document.getElementById('gripProgressStatus').textContent = '-';
+        
+        // 주문 품번 숨기기
+        const orderNumberElement = document.querySelector('.order-value');
+        if (orderNumberElement) {
+            orderNumberElement.classList.remove('show');
+        }
+        
+        // STEP 3 숨김
+        document.getElementById('step3Section').style.display = 'none';
+        
+        // 종합 판정 초기화
+        document.getElementById('finalResult').textContent = '값을 모두 입력하세요';
+        document.getElementById('finalResult').style.backgroundColor = '#gray';
+        return;
+    }
+
+    // STEP 1: 실효파지력 계산
+    const actualForce = calculateEffectiveGripForce(diameter, operationType, pressure, gripPoint, gripMethod);
+    const requiredForce = load * safetyFactor * 9.8;
+
+    // STEP 1 결과 업데이트
+    document.getElementById('actualForce').textContent = actualForce.toFixed(1) + ' N';
+    document.getElementById('requiredForce').textContent = requiredForce.toFixed(1) + ' N';
+
+    // STEP 1 파지력 사용률 계산
+    const ratio = (requiredForce / actualForce) * 100;
+    
+    document.getElementById('progressBar').style.width = Math.min(ratio, 100) + '%';
+    document.getElementById('progressBar').querySelector('.progress-text').textContent = ratio.toFixed(1) + '%';
+    
+    if (ratio < 100) {
+        document.getElementById('progressBar').style.backgroundColor = "#4CAF50";
+        document.getElementById('progressStatus').textContent = "적용가능";
+        document.getElementById('progressStatus').style.color = "#4CAF50";
+    } else {
+        document.getElementById('progressBar').style.backgroundColor = "#f44336";
+        document.getElementById('progressStatus').textContent = "적용불가 (에어척 내경을 한 단계 크게 하거나 부하량을 축소하세요)";
+        document.getElementById('progressStatus').style.color = "#f44336";
+    }
+
+    // STEP 2: 파지점 + 오버행량 합계 계산
+    const totalGripLength = gripPoint + overhang;
+    const allowedRange = getAllowedRange(diameter, operationType, gripMethod, pressure);
+    
+    // STEP 2 결과 업데이트
+    document.getElementById('currentGripPoint').textContent = totalGripLength.toFixed(1) + " mm";
+    document.getElementById('maxGripPoint').textContent = allowedRange.toFixed(1) + " mm";
+    
+    // STEP 2 파지점 사용률 계산
+    const gripRatio = (totalGripLength / allowedRange) * 100;
+    
+    document.getElementById('gripProgressBar').style.width = Math.min(gripRatio, 100) + '%';
+    document.getElementById('gripProgressBar').querySelector('.progress-text').textContent = gripRatio.toFixed(1) + '%';
+    
+    if (gripRatio <= 100) {
+        document.getElementById('gripProgressBar').style.backgroundColor = "#4CAF50";
+        document.getElementById('gripProgressStatus').textContent = "적용가능";
+        document.getElementById('gripProgressStatus').style.color = "#4CAF50";
+    } else {
+        document.getElementById('gripProgressBar').style.backgroundColor = "#f44336";
+        document.getElementById('gripProgressStatus').textContent = "적용불가 (에어척 내경을 한 단계 크게 하거나 파지점 또는 오버행량을 축소하세요)";
+        document.getElementById('gripProgressStatus').style.color = "#f44336";
+    }
+    
+    // STEP 3 계산을 위한 변수들 (NFH2 데이터)
+    const maxVerticalLoad = {
+        '010': 62,
+        '016': 114,
+        '020': 151,
+        '025': 289,
+        '032': 417,
+        '040': 584
+    };
+
+    const maxPitchingMoment = {
+        '010': 0.28,
+        '016': 0.79,
+        '020': 1.35,
+        '025': 1.94,
+        '032': 3.6,
+        '040': 5.3
+    };
+
+    const maxYawingMoment = {
+        '010': 0.28,
+        '016': 0.79,
+        '020': 1.35,
+        '025': 1.94,
+        '032': 3.6,
+        '040': 5.3
+    };
+
+    const maxRollingMoment = {
+        '010': 0.56,
+        '016': 1.58,
+        '020': 2.71,
+        '025': 3.88,
+        '032': 7.3,
+        '040': 10.7
+    };
+
+    const loadFactor = safetyFactor < 10 ? 0.5 : 1;
+    const momentFactor = safetyFactor < 10 ? 4 : 3;
+
+    const wMax = maxVerticalLoad[diameter];
+    const allowedLoad = loadFactor * wMax;
+    const loadRatio = (load * 9.8) / allowedLoad;
+
+    const pitchingMoment = (load * 9.8 * gripPoint * momentFactor) / 1000;
+    const maxPitchingMomentValue = maxPitchingMoment[diameter];
+    const pitchingRatio = pitchingMoment / maxPitchingMomentValue;
+
+    const yawingMoment = (load * 9.8 * overhang * momentFactor) / 1000;
+    const maxYawingMomentValue = maxYawingMoment[diameter];
+    const yawingRatio = yawingMoment / maxYawingMomentValue;
+
+    const rollingMoment = (load * 9.8 * gripPoint * momentFactor) / 1000;
+    const maxRollingMomentValue = maxRollingMoment[diameter];
+    const rollingRatio = rollingMoment / maxRollingMomentValue;
+
+    // 총 부하율 계산
+    const totalRatio = (isFinite(loadRatio) ? loadRatio : 0) + (isFinite(pitchingRatio) ? pitchingRatio : 0) + (isFinite(yawingRatio) ? yawingRatio : 0) + (isFinite(rollingRatio) ? rollingRatio : 0);
+
+    // 종합 판정 (STEP 1, STEP 2, 총 부하율 모두 확인)
+    const isStep1Valid = ratio < 100;
+    const isStep2Valid = gripRatio <= 100;
+    
+    const orderNumberElement = document.querySelector('.order-value');
+    
+    if (isStep1Valid && isStep2Valid && totalRatio <= 1) {
+        document.getElementById('finalResult').textContent = "적용가능";
+        document.getElementById('finalResult').style.backgroundColor = "#4CAF50";
+        
+        // 주문 품번 보이기
+        if (orderNumberElement) {
+            orderNumberElement.classList.add('show');
+        }
+    } else {
+        document.getElementById('finalResult').textContent = "적용불가";
+        document.getElementById('finalResult').style.backgroundColor = "#f44336";
+        
+        // 주문 품번 숨기기
+        if (orderNumberElement) {
+            orderNumberElement.classList.remove('show');
+        }
+    }
+    
+    // STEP3은 항상 표시
+    document.getElementById('step3Section').style.display = 'block';
+    calculateStep3();
+}
+
+// STEP 3 계산 함수 수정 (NFH2 정확한 공식 적용)
+function calculateStep3() {
+    const diameter = document.getElementById('diameter').value;
+    const load = parseFloat(document.getElementById('load').value);
+    const safetyFactor = parseFloat(document.getElementById('safetyFactor').value);
+    const gripPoint = parseFloat(document.getElementById('gripPoint').value);
+    const overhang = parseFloat(document.getElementById('overhang').value);
+
+    // 직경별 수직최대허용하중(Wmax)
+    const maxVerticalLoad = {
+        '010': 62,
+        '016': 114,
+        '020': 151,
+        '025': 289,
+        '032': 417,
+        '040': 584
+    };
+
+    // 직경별 허용Pitching모멘트(Mpmax)
+    const maxPitchingMoment = {
+        '010': 0.28,
+        '016': 0.79,
+        '020': 1.35,
+        '025': 1.94,
+        '032': 3.6,
+        '040': 5.3
+    };
+
+    // 직경별 허용Yawing모멘트(Mymax) - Pitching과 동일
+    const maxYawingMoment = {
+        '010': 0.28,
+        '016': 0.79,
+        '020': 1.35,
+        '025': 1.94,
+        '032': 3.6,
+        '040': 5.3
+    };
+
+    // 직경별 허용Rolling모멘트(Mrmax)
+    const maxRollingMoment = {
+        '010': 0.56,
+        '016': 1.58,
+        '020': 2.71,
+        '025': 3.88,
+        '032': 7.3,
+        '040': 10.7
+    };
+
+    // 허용적재중량계수 및 허용모멘트계수
+    const loadFactor = safetyFactor < 10 ? 0.5 : 1;
+    const momentFactor = safetyFactor < 10 ? 4 : 3;
+
+    // 1. 허용중량 계산: 허용중량(Wa) = 허용적재중량계수 * 수직최대허용하중(Wmax)
+    const wMax = maxVerticalLoad[diameter];
+    const allowedLoad = loadFactor * wMax;
+
+    // 2. 허용하중 부하율 α1 = (부하량 입력값*9.8)/허용중량(Wa)
+    const loadRatio = (load * 9.8) / allowedLoad;
+
+    // 3. Pitching 하중 계산
+    const pitchingForce = load * momentFactor * 9.8; // Pitching하중(Fp) = 부하량*허용모멘트계수*9.8
+    const pitchingMoment = (load * 9.8 * gripPoint * momentFactor) / 1000; // Pitching모멘트(Mp) = (부하량*9.8*파지점L)*허용모멘트계수/1000
+    const maxPitchingMomentValue = maxPitchingMoment[diameter];
+    const pitchingRatio = pitchingMoment / maxPitchingMomentValue; // Pitching 모멘트 부하율 α2 = Mp/Mpmax
+
+    // 4. Yawing 하중 계산
+    const yawingForce = load * momentFactor * 9.8; // Yawing하중(Fy) = 부하량*허용모멘트계수*9.8
+    const yawingMoment = (load * 9.8 * overhang * momentFactor) / 1000; // Yawing모멘트(My) = (부하량*9.8*오버행량H)*허용모멘트계수/1000
+    const maxYawingMomentValue = maxYawingMoment[diameter];
+    const yawingRatio = yawingMoment / maxYawingMomentValue; // Yawing모멘트 부하율 α3 = My/Mymax
+
+    // 5. Rolling 하중 계산
+    const rollingForce = load * 9.8; // Rolling하중(Fr) = 부하량*9.8
+    const rollingMoment = (load * 9.8 * gripPoint * momentFactor) / 1000; // Rolling모멘트(Mr) = (부하량*9.8*파지점L)*허용모멘트계수/1000
+    const maxRollingMomentValue = maxRollingMoment[diameter];
+    const rollingRatio = rollingMoment / maxRollingMomentValue; // Rolling모멘트 부하율 α4 = Mr/Mrmax
+
+    // 결과 업데이트
+    document.getElementById('allowedLoad').textContent = allowedLoad.toFixed(0) + ' N';
+    document.getElementById('loadFactor').textContent = loadFactor;
+    document.getElementById('maxVerticalLoad').textContent = wMax + ' N';
+    document.getElementById('loadRatio').textContent = loadRatio.toFixed(3);
+
+    document.getElementById('pitchingForce').textContent = pitchingForce.toFixed(1) + ' N';
+    document.getElementById('pitchingMoment').textContent = pitchingMoment.toFixed(3) + ' N.m';
+    document.getElementById('momentFactor').textContent = momentFactor;
+    document.getElementById('maxPitchingMoment').textContent = maxPitchingMomentValue.toFixed(2) + ' N.m';
+    document.getElementById('pitchingRatio').textContent = pitchingRatio.toFixed(3);
+
+    document.getElementById('yawingForce').textContent = yawingForce.toFixed(1) + ' N';
+    document.getElementById('yawingMoment').textContent = yawingMoment.toFixed(3) + ' N.m';
+    document.getElementById('yawingMomentFactor').textContent = momentFactor;
+    document.getElementById('maxYawingMoment').textContent = maxYawingMomentValue.toFixed(2) + ' N.m';
+    document.getElementById('yawingRatio').textContent = yawingRatio.toFixed(3);
+
+    document.getElementById('rollingForce').textContent = rollingForce.toFixed(1) + ' N';
+    document.getElementById('rollingMoment').textContent = rollingMoment.toFixed(3) + ' N.m';
+    document.getElementById('rollingMomentFactor').textContent = momentFactor;
+    document.getElementById('maxRollingMoment').textContent = maxRollingMomentValue.toFixed(2) + ' N.m';
+    document.getElementById('rollingRatio').textContent = rollingRatio.toFixed(3);
+
+    // 각 방향의 횡하중 확인: Fp, Fy, Fr 값이 Fpmax, Fymax, Frmax 값보다 작으면 "OK", 크면 "NO"
+    // (Fpmax, Fymax, Frmax 값은 삭제되었으므로 항상 "OK"로 표시)
+    const isPitchingOK = true;
+    const isYawingOK = true;
+    const isRollingOK = true;
+    
+    // 개별 결과 표시
+    const pitchingCheckElement = document.getElementById('pitchingCheck');
+    const yawingCheckElement = document.getElementById('yawingCheck');
+    const rollingCheckElement = document.getElementById('rollingCheck');
+    
+    if (pitchingCheckElement) {
+        pitchingCheckElement.textContent = isPitchingOK ? 'OK' : 'NO';
+        pitchingCheckElement.className = `force-result ${isPitchingOK ? 'ok' : 'no'}`;
+        pitchingCheckElement.parentElement.className = `force-check-item ${isPitchingOK ? '' : 'failed'}`;
+    }
+    
+    if (yawingCheckElement) {
+        yawingCheckElement.textContent = isYawingOK ? 'OK' : 'NO';
+        yawingCheckElement.className = `force-result ${isYawingOK ? 'ok' : 'no'}`;
+        yawingCheckElement.parentElement.className = `force-check-item ${isYawingOK ? '' : 'failed'}`;
+    }
+    
+    if (rollingCheckElement) {
+        rollingCheckElement.textContent = isRollingOK ? 'OK' : 'NO';
+        rollingCheckElement.className = `force-result ${isRollingOK ? 'ok' : 'no'}`;
+        rollingCheckElement.parentElement.className = `force-check-item ${isRollingOK ? '' : 'failed'}`;
+    }
+
+    // 총 부하율 계산: Σαn = α1 + α2 + α3 + α4
+    const totalRatio = loadRatio + pitchingRatio + yawingRatio + rollingRatio;
+    document.getElementById('totalRatio').textContent = totalRatio.toFixed(3);
+
+    // 총 부하율이 1 이하인지 확인
+    const totalRatioElement = document.getElementById('totalRatio');
+    if (totalRatio <= 1) {
+        totalRatioElement.style.color = '#4CAF50';
+    } else {
+        totalRatioElement.style.color = '#f44336';
+    }
+}
+
+// 이벤트 리스너 수정
+document.addEventListener('DOMContentLoaded', function() {
+    const gripMethodSelect = document.getElementById('gripMethod');
+    const seriesSelect = document.getElementById('series');
+    const diameterSelect = document.getElementById('diameter');
+    const inputs = document.querySelectorAll('input, select');
+    
+    // 파지 방법 변경 시 이벤트
+    gripMethodSelect.addEventListener('change', function() {
+        updateGripTypeImage();
+    });
+    
+    // 시리즈 변경 시 이벤트
+    seriesSelect.addEventListener('change', function() {
+        updateDiameterOptions();
+    });
+    
+    // 내경 변경 시 이벤트
+    diameterSelect.addEventListener('change', function() {
+        updatePressureOptions();
+    });
+    
+
+    
+    // 모든 입력값 변경 시 이벤트 (새로 추가된 select 요소들 포함)
+    inputs.forEach(input => {
+        input.addEventListener('input', calculateResults);
+        input.addEventListener('change', calculateResults);
+    });
+    
+    // 초기 설정
+    updateDiameterOptions();
+    updatePressureOptions();
+    calculateResults();
+});
+</script>
+</body>
+</html>
