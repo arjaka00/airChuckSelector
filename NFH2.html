@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>NFHC2 기종선정 시트</title>
+    <title>NFH(L)2 기종선정 시트</title>
     
     <!-- 소스 보호 스크립트 -->
     <script>
@@ -487,9 +487,9 @@
             </tr>
             <tr>
                 <td>부하량</td>
-                <td class="input-cell"><input type="number" id="load" step="0.001" min="0.001" max="1.8" placeholder="0.001 ~ 1.8"></td>
+                <td class="input-cell"><input type="number" id="load" step="0.001" min="0.001" max="3.9" placeholder="0.001 ~ 3.9"></td>
                 <td>kg</td>
-                <td>적재 질량 입력 [0.001~1.8kg]</td>
+                <td>적재 질량 입력 [0.001~3.9kg]</td>
             </tr>
             <tr>
                 <td>안전율</td>
@@ -499,15 +499,15 @@
             </tr>
             <tr>
                 <td>파지점 L</td>
-                <td class="input-cell"><input type="number" id="gripPoint" min="5" max="140" placeholder="5 ~ 140"></td>
+                <td class="input-cell"><input type="number" id="gripPoint" min="5" max="150" placeholder="5 ~ 150"></td>
                 <td>mm</td>
-                <td>Rail 상면에서 부터 부하중심까지의 거리 [5~140mm]</td>
+                <td>Rail 상면에서 부터 부하중심까지의 거리 [5~150mm]</td>
             </tr>
             <tr>
                 <td>오버행량 H</td>
-                <td class="input-cell"><input type="number" id="overhang" min="0" max="140" placeholder="0 ~ 140"></td>
+                <td class="input-cell"><input type="number" id="overhang" min="0" max="150" placeholder="0 ~ 150"></td>
                 <td>mm</td>
-                <td>에어척 중심으로부터 부하중심까지 수평 거리 [0~140mm]</td>
+                <td>에어척 중심으로부터 부하중심까지 수평 거리 [0~150mm]</td>
             </tr>
             <!-- 조 옵션 -->
             <tr>
@@ -1251,7 +1251,7 @@ function calculateResults() {
             orderNumberElement.classList.add('show');
         }
     } else {
-        document.getElementById('finalResult').textContent = "적용불가";
+        document.getElementById('finalResult').textContent = "적용불가 (에어척 내경을 한 단계 크게 하거나 파지점 또는 오버행량을 축소하세요)";
         document.getElementById('finalResult').style.backgroundColor = "#f44336";
         
         // 주문 품번 숨기기
